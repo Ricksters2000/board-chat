@@ -1,0 +1,23 @@
+.message {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-text {
+    text-align: left;
+    padding-left: 3rem;
+}
+
+.user-display {
+    display: flex;
+}
+
+.user-display img {
+    width: 3em;
+    border: 2px;
+}
+
+.user-display div {
+    align-self: center;
+    padding-left: 2em;
+}

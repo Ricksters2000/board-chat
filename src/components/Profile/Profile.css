@@ -1,0 +1,56 @@
+.pic {
+    width: 7rem;
+    height: 7rem;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: 3px solid;
+}
+
+.submit-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit-btn {
+    width: 35%;
+    /* margin: 0 .1rem; */
+}
+
+.submit-btn:hover {
+    cursor: pointer;
+}
+
+.image-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-btn {
+    background: #0000007d;
+    color: #ffffffb3;
+    width: inherit;
+    font-size: larger;
+    text-align: center;
+}
+
+.color-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.color-btn {
+    width: 20%;
+}
+
+.color-btn:hover {
+    cursor: pointer;
+}
+
+.image-btn:hover {
+    cursor: pointer;
+}
+
+.invis {
+    visibility: hidden;
+}

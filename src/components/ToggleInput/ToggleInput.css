@@ -1,0 +1,15 @@
+.input-off {
+    display: flex;
+}
+
+.input-off p {
+    margin-right: auto;
+}
+
+.edit-btn {
+    height: max-content;
+}
+
+.edit-btn:hover {
+    cursor: pointer;
+}
