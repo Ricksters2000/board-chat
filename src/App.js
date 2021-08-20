@@ -21,7 +21,7 @@ const defaultState = {
   color: randRgb(),
   wins: 0,
   profileOpen: false,
-  inviteReceived: true,
+  invitesReceived: [{username: 'e', game: 'checkers'}],
 }
 
 class App extends React.Component {
@@ -110,8 +110,12 @@ class App extends React.Component {
 
   }
 
+  declineInvite = () => {
+
+  }
+
   render() {
-    const {socket, id, username, email, image, color, wins, profileOpen, inviteReceived} = this.state;
+    const {socket, id, username, email, image, color, wins, profileOpen, invitesReceived} = this.state;
 
     return (
       <div className="App">
@@ -123,9 +127,8 @@ class App extends React.Component {
               <Row>
                 <Col xs='9'><MessageList user={{username, email, image, color, wins}} socket={socket} /></Col>
                 <Col xs='3'>
-                  <Alert style={{marginRight: '1rem'}} isOpen={inviteReceived}>
-                    <Invite username={'e'} game={'checkers'}/>
-                  </Alert>
+                  {invitesReceived.map((invite, i) => <Invite key={i} {...invite} />)}
+                  {/* <Invite username={'e'} game={'checkers'}/> */}
                 </Col>
               </Row>
               {/* <MessageList user={{username, email, image, color, wins}} socket={socket} /> */}

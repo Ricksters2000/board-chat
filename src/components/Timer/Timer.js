@@ -13,7 +13,7 @@ const Timer = ({seconds, onTimeEnd}) => {
             // console.log(t)
             if(t <= 0) {
                 clearInterval(interval);
-                // onTimeEnd();
+                onTimeEnd();
                 return;
             }
             const currentTime = new Date();
