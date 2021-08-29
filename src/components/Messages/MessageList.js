@@ -29,15 +29,15 @@ class MessageList extends React.Component {
     onMessageSent = () => {
         const {username, email, image, color, wins} = this.props.user;
 
-        this.props.socket.emit('message', {username, email, image, color, wins, msg: this.state.currentMessage});
+        this.props.socket.emit('message', {username, email, image, color, wins, id: this.props.socket.id, msg: this.state.currentMessage});
     }
 
     onTypingMessage = (evt) => {
         this.setState({currentMessage: evt.target.value});
     }
 
-    sendInvite = () => {
-        this.props.socket.emit('send-invite');
+    sendInvite = (toId, game) => {
+        this.props.socket.emit('send-invite', toId, {username: this.props.user.username, game});
     }
 
     render() {
@@ -47,8 +47,8 @@ class MessageList extends React.Component {
             <div className='messages'>
                 <ScrollBoundary >
                     {messages.map((m,i) => {
-                        const {username, email, image, color, wins, msg} = m;
-                        return(<Message key={i} user={{username, email, image, color, wins}} text={msg} invite={this.sendInvite} />)
+                        const {id, username, email, image, color, wins, msg} = m;
+                        return(<Message key={i} id={id} user={{username, email, image, color, wins}} text={msg} invite={this.sendInvite} />)
                     })}
                 </ScrollBoundary>
                 <MessageForm onSubmit={this.onMessageSent} onTextChange={this.onTypingMessage} />

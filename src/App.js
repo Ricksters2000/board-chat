@@ -11,6 +11,7 @@ import Navigation from './components/Nav/Nav';
 import Profile from './components/Profile/Profile';
 import Invite from './components/Invite/Invite';
 import './App.css';
+import ScrollBoundary from './components/ScrollBoundary/ScrollBoundary';
 
 const defaultState = {
   socket: null,
@@ -21,7 +22,7 @@ const defaultState = {
   color: randRgb(),
   wins: 0,
   profileOpen: false,
-  invitesReceived: [{username: 'e', game: 'checkers'}],
+  invitesReceived: [],
 }
 
 class App extends React.Component {
@@ -106,12 +107,13 @@ class App extends React.Component {
     this.setState({...defaultState});
   }
 
-  receiveInvite = () => {
-
+  receiveInvite = (from) => {
+    const newInvite = {id: from.socketId, username: from.username, game: from.game};
+    this.setState(prevState => ({invitesReceived: [...prevState.invitesReceived, newInvite]}))
   }
 
-  declineInvite = () => {
-
+  declineInvite = (id) => {
+    // this.setState(prevState => ({invitesReceived: prevState.invitesReceived.filter((inv) => inv.id !== id)}));
   }
 
   render() {
@@ -127,17 +129,14 @@ class App extends React.Component {
               <Row>
                 <Col xs='9'><MessageList user={{username, email, image, color, wins}} socket={socket} /></Col>
                 <Col xs='3'>
-                  {invitesReceived.map((invite, i) => <Invite key={i} {...invite} />)}
-                  {/* <Invite username={'e'} game={'checkers'}/> */}
+                  <ScrollBoundary>
+                    {invitesReceived.map((invite, i) => <Invite key={i} {...invite} declined={this.declineInvite} />)}
+                  </ScrollBoundary>
                 </Col>
               </Row>
-              {/* <MessageList user={{username, email, image, color, wins}} socket={socket} /> */}
               <Modal isOpen={profileOpen}>
                 <Profile user={{username, email, image, color, wins}} onSubmit={this.onProfileUpdate} toggleProfile={this.toggleProfileModal} />
               </Modal>
-              {/* <Modal isOpen={inviteReceived}>
-                <Invite username={'e'} game={'checkers'}/>
-              </Modal> */}
             </>
           )} />
           <Route exact path='/checkers' render={() => <Board />} />

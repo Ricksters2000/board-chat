@@ -10,7 +10,7 @@ const InviteMenu = ({invite}) => {
         <Dropdown direction='right' isOpen={showMenu} onMouseEnter={toggleShowMenu} onMouseLeave={toggleShowMenu}>
             <DropdownToggle caret dir='right' >Invite</DropdownToggle>
             <DropdownMenu>
-                <DropdownItem onClick={invite}>Checkers</DropdownItem>
+                <DropdownItem onClick={() => invite('checkers')}>Checkers</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     )

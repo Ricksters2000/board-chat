@@ -21,11 +21,13 @@ const Timer = ({seconds, onTimeEnd}) => {
             t = seconds - ((currentTime - startingTime) / 1000)
             setTime(t);
         }, 1000/24)
+
+        return () => clearInterval(interval);
     },[])
     
     return(
         <div>
-            <Progress style={{height: '.3rem'}} value={time} max={seconds} />
+            <Progress style={{height: '.3rem'}} barStyle={{transition: 'none'}} value={time} max={seconds} />
         </div>
     )
 }

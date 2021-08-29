@@ -4,7 +4,7 @@ import Profile from '../Profile/Profile';
 import InviteMenu from '../Invite/InviteMenu';
 import './Message.css';
 
-const Message = ({user, text, invite}) => {
+const Message = ({id, user, text, invite}) => {
     const [showProfile, setShowProfile] = useState(false);
     const {username, image, color} = user;
 
@@ -33,7 +33,7 @@ const Message = ({user, text, invite}) => {
                 <DropdownMenu modifiers={{offset: {fn: dropDownPlacement, /* offset: '0px, 47px' */}}}>
                     <DropdownItem onClick={toggleShowProfile}>Profile</DropdownItem>
                     <DropdownItem divider />
-                    <InviteMenu invite={invite} />
+                    <InviteMenu invite={(game) => invite(id, game)} />
                 </DropdownMenu>
             </UncontrolledDropdown>
             <p className='text-light message-text' >{text}</p>
