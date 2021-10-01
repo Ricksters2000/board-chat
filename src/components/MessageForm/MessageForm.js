@@ -3,7 +3,7 @@ import React from 'react';
 const MessageForm = ({onSubmit, onTextChange}) => {
     const onFormSubmit = (evt) => {
         evt.preventDefault();
-        console.log(evt.target, evt.target['send-message'])
+        // console.log(evt.target, evt.target['send-message'])
         evt.target['send-message'].value = ''
         onSubmit();
     }

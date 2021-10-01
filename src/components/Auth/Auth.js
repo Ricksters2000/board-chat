@@ -20,7 +20,7 @@ return(
         </FormGroup>
         <FormGroup>
             <Label className='mx-auto' for='submit'>
-                <Button outline color='primary'>Sign In</Button>
+                <Button outline color='primary'>{isRegistering ? 'Register' : 'Sign In'}</Button>
             </Label>
         </FormGroup>
         <Input type='submit' id='submit' style={{visibility: 'hidden', padding: 0, height: 0}} />

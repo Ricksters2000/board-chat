@@ -1,0 +1,27 @@
+.player-card {
+    display: flex;
+    align-items: center;
+    border: 2px solid;
+    border-radius: .25rem;
+    border-color: rgb(189, 143, 224);
+    background-color: rgb(189, 143, 224, 0.45);
+    /* width: 15rem; */
+    /* width: 20%; */
+    overflow-x: hidden;
+    padding: .5rem;
+    margin: .25rem 1rem;
+}
+
+.player-card .profile-icon {
+    border: none;
+    border-radius: .25rem;
+    width: 2.5rem;
+    margin-right: 1rem;
+}
+
+.player-card .name {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    height: fit-content;
+}

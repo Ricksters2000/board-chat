@@ -1,35 +1,54 @@
+import { WIN, LOSE } from '../ResultScreen/constants';
+import { DEFAULT_IMAGE } from '../../services/constants';
 import React from 'react';
-import {io} from 'socket.io-client';
+import {Redirect} from 'react-router-dom';
+import {fetchUser} from '../../services/api';
+import { randRgb } from '../../services/Rand';
 import Tile from './Tile';
+import ResultScreen from '../ResultScreen/ResultScreen';
+import ProfileCard from '../Profile/ProfileCard';
 import './Board.css';
 
-class Board extends React.Component {
-    constructor() {
-        super();
+const defaultState = {
+    player: -1,
+    clientInfo: null,
+    oppenentInfo: null,
+    cols: -1,
+    rows: -1,
+    board: null,
+    tileClicked: null,
+    p1Pieces: 0,
+    p2Pieces: 0,
+    currentTurn: 1,
+    result: '',
+}
 
+class Board extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.board = null;
         this.possibleTiles = [];
-        this.state = {
-            room: '',
-            player: -1,
-            cols: -1,
-            rows: -1,
-            board: null,
-            tileClicked: null,
-            p1Pieces: 0,
-            p2Pieces: 0,
-            currentTurn: 1,
-        }
-        
-        this.socket = null;
+        this.state = {...defaultState};
     }
 
     componentDidMount() {
-        this.socket = io('http://localhost:8000/');
-        this.socket.on('game-started', (player, room) => {
-            console.log('socket connected as:', this.socket);
-            this.setState({room, player})
+        if(!this.props.socket) return;
+        
+        this.props.socket.on('game-started', (p1Id) => {
+            this.setState({player: p1Id === this.props.socket.id ? 1 : 2});
+            this.props.socket.emit('send-user-id', this.props.userId, this.props.roomId);
         })
-        this.socket.on('end-turn', this.onTurnEnd);
+        this.props.socket.on('get-user-id', (id) => {
+            if(id == this.props.userId) return; //don't recieve it's own id
+
+            this.getUserInfo(id)
+                .then(user => {
+                    this.setState({oppenentInfo: {...user}});
+                })
+                .catch(err => console.log(err))
+        })
+        this.props.socket.on('end-turn', this.onTurnEnd);
 
         const cols = 8;
         const rows = 8;
@@ -81,10 +100,51 @@ class Board extends React.Component {
                         onTileChecked={this.onTileChecked} onTileMoved={this.onSendMove} />
         }));
         this.setState({cols, rows, board, p1Pieces: piecesPerTeam, p2Pieces: piecesPerTeam})
+        
+        this.getUserInfo(this.props.userId)
+            .then(user => {
+                this.setState({clientInfo: {...user}}, () => this.props.socket.emit('ready-up', this.props.roomId));
+            })
+            .catch(err => console.log(err))
+
+        this.board = document.getElementsByClassName('board-container')[0];
+        window.addEventListener('resize', this.onBoardResize);
+        this.onBoardResize();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.onBoardResize);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.currentTurn !== this.state.currentTurn) {
+            if(this.didGameEnd()) {
+                if(this.state.currentTurn === this.state.player) {
+                    this.props.setWin(false);
+                    this.setState({result: LOSE});
+                } else {
+                    this.props.setWin(true);
+                    this.setState({result: WIN});
+                }
+            }
+        }
+    }
+
+    getUserInfo = (userId) => {
+        if(isNaN(userId)) {
+            return Promise.resolve({username: userId, image: DEFAULT_IMAGE, color: randRgb()});
+        }
+
+        return fetchUser(userId).then(user => {
+            const {username, image, color} = user;
+            return {username, image: image || DEFAULT_IMAGE, color};
+        }).catch(err => Promise.reject(err))
+    }
+
+    onBoardResize = () => this.board.style.width = this.board.clientHeight + 'px'
+
     onTileChecked = (row, col, playerNum, isKing) => {
-        if(playerNum !== this.state.player) return;
+        if(playerNum !== this.state.player || this.state.currentTurn !== this.state.player) return;
 
         // console.log('possible tiles:', this.possibleTiles)
         if(this.possibleTiles) {
@@ -113,8 +173,9 @@ class Board extends React.Component {
             this.helperSetTiles(board, row+rowIncrement*-1, col+1, rowIncrement*-1, playerNum, false, col, [], true);
         }
 
-        //********setting tiles using for loop*********
-        /* const startingRow = row + rowIncrement;
+        // console.log('possible tiles:', this.possibleTiles)
+        /********setting tiles using for loop*********
+        const startingRow = row + rowIncrement;
         const startingCol = col + colIncrement;
         let onPiece = false;
         console.log('starting set tiles for:', row, col, forLeft ? 'left-side' : 'right-side');
@@ -140,12 +201,13 @@ class Board extends React.Component {
     }
 
     helperSetTiles = (board, row, col, rInc, playerNum, onPiece, prevCol=-1, piecesToKill=[], started=false) => {
-        console.log(row, col, onPiece, started?'just started':'continuing');
+        // console.log(row, col, onPiece, started?'just started':'continuing');
         let isMoveable = true;
         if(row < 0 || row >= board.length || col < 0 || col >= board.length) return console.log('end');
         
         const tile = board[row][col];
         if(tile.props.hasPiece) {
+            //can't go over 2 pieces and can't go over own player's piece soo it will return else it will continue checking
             if(onPiece || tile.props.playerNum === playerNum) return;
             onPiece = true;
             isMoveable = false;
@@ -156,7 +218,7 @@ class Board extends React.Component {
                 piecesToKill = [...piecesToKill, [row-rInc,prevCol]];
             }
         }
-
+        
         if(isMoveable) {
             board[row][col] = <Tile key={tile.key} {...tile.props} isMovable={true} piecesToKill={piecesToKill} />
             this.possibleTiles.push([row,col]);
@@ -184,9 +246,11 @@ class Board extends React.Component {
     }
 
     onSendMove = (row, col, piecesToKill) => {
+        if(this.state.currentTurn !== this.state.player) return;
+        
         this.resetPossibleTiles();
-        let options = {tileClicked: this.state.tileClicked, row, col, piecesToKill, room: this.state.room};
-        this.socket.emit('end-turn', options);
+        let options = {tileClicked: this.state.tileClicked, row, col, piecesToKill, room: this.props.roomId};
+        this.props.socket.emit('end-turn', options);
     }
 
     onTurnEnd = (options) => {
@@ -210,19 +274,58 @@ class Board extends React.Component {
         board[r][c] = <Tile key={tClicked.key} {...tClicked.props} hasPiece={false} />
         board[row][col] = <Tile key={tileToMoveTo.key} {...tileToMoveTo.props} playerNum={playerNum} isKing={isK} hasPiece={true} />
 
-        this.setState({board, 
-            p1Pieces: playerNum === 1 ? this.state.p1Pieces : this.state.p1Pieces - piecesDied, 
-            p2Pieces: playerNum === 1 ? this.state.p2Pieces - piecesDied : this.state.p2Pieces
-        });
+        this.setState(prevState => ({board, 
+            p1Pieces: playerNum === 1 ? prevState.p1Pieces : prevState.p1Pieces - piecesDied, 
+            p2Pieces: playerNum === 1 ? prevState.p2Pieces - piecesDied : prevState.p2Pieces,
+            currentTurn: prevState.currentTurn === 1 ? 2 : 1
+        }));
+    }
+
+    didGameEnd = () => {
+        if(this.state.p1Pieces <= 0 || this.state.p2Pieces <= 0) return true;
+
+        const board = this.state.board;
+        for(let r=0; r < board.length; r++) {
+            for(let c=0; c < board[r].length; c++) {
+                const tile = board[r][c];
+                const {row, col, playerNum, hasPiece, isKing} = tile.props;
+                if(hasPiece && playerNum === this.state.currentTurn) {
+                    this.setAllPossibleTiles(row-1, col-1, playerNum, isKing);
+                    if(this.possibleTiles.length > 0) {
+                        this.resetPossibleTiles();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     render() {
-        const {cols, rows, board} = this.state;
+        const {player, clientInfo, oppenentInfo, cols, rows, board, result} = this.state;
+        let p1CardProps, p2CardProps;
+
+        if(player === 1) {
+            p1CardProps = {...clientInfo, isThisClient: true};
+            p2CardProps = {...oppenentInfo, isThisClient: false};
+        } else {
+            p1CardProps = {...oppenentInfo, isThisClient: false};
+            p2CardProps = {...clientInfo, isThisClient: true};
+        }
 
         return(
-            <div className='board-container' style={{gridTemplateColumns: `repeat(${cols},1fr)`, gridTemplateRows: `repeat(${rows},1fr)`}}>
-                {board && board.map(r => r.map(c => c))}
-            </div>
+            <>
+                <ResultScreen result={result} />
+                {!this.props.socket && <Redirect to='/' />}
+                <div style={{display: 'flex', padding: '.5rem'}}>
+                    <ProfileCard style={{alignSelf: 'flex-end', marginLeft: 'auto'}} {...p2CardProps} />
+                    <div className='board-container' style={{gridTemplateColumns: `repeat(${cols},1fr)`, gridTemplateRows: `repeat(${rows},1fr)`}}>
+                        {board && board.map(r => r.map(c => c))}
+                    </div>
+                    <ProfileCard style={{alignSelf: 'flex-start', marginRight: 'auto'}} {...p1CardProps} />
+                </div>
+            </>
         )
     }
 }

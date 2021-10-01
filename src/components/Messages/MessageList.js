@@ -14,10 +14,24 @@ class MessageList extends React.Component {
         }
     }
 
+    componentDidMount() {
+        if(this.props.socket) {
+            this.setupSocket();
+        }
+    }
+
+    componentWillUnmount() {
+        this.props.socket.off('message');
+    }
+
     componentDidUpdate(prevProps) {
         if(prevProps.socket !== this.props.socket) {
-            this.props.socket.on('message', this.onMessageReceived);
+            this.setupSocket();
         }
+    }
+
+    setupSocket = () => {
+        this.props.socket.on('message', this.onMessageReceived);
     }
 
     onMessageReceived = async (info) => {
@@ -48,7 +62,7 @@ class MessageList extends React.Component {
                 <ScrollBoundary >
                     {messages.map((m,i) => {
                         const {id, username, email, image, color, wins, msg} = m;
-                        return(<Message key={i} id={id} user={{username, email, image, color, wins}} text={msg} invite={this.sendInvite} />)
+                        return(<Message key={i} clientId={this.props.socket.id} id={id} user={{username, email, image, color, wins}} text={msg} invite={this.sendInvite} />)
                     })}
                 </ScrollBoundary>
                 <MessageForm onSubmit={this.onMessageSent} onTextChange={this.onTypingMessage} />

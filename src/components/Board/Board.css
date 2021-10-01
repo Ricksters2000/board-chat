@@ -1,19 +1,18 @@
 .board-container {
     display: grid;
     /* height: 8em; */
-    background-color: black;
+    /* background-color: black; */
     /* gap: 1px; */
 
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    background: #eee;
-    border: 1px solid #ccc;
-    padding: 10px;
+    /* border: 1px solid #ccc; */
+    /* padding: 10px; */
     height: 95vh;
     width: 75%;
-    margin-left: auto;
-    margin-right: auto;
+    /* margin-left: auto;
+    margin-right: auto; */
 }
 
 .piece {

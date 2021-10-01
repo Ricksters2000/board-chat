@@ -1,6 +1,7 @@
 .scroll {
     list-style: none;
     overflow-wrap: anywhere;
+    overflow-x: hidden;
     overflow-y: scroll;
     height: 77vh;
     display: flex;

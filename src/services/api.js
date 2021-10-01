@@ -22,3 +22,10 @@ export const fetchUser = (id) => {
             return {username: name, email, image: image || DEFAULT_IMAGE, color, wins};
         }).catch(err => Promise.reject(err))
 }
+
+export const incrementUserWin = (id) => {
+    return fetchApi(`/profile/win/${id}`, 'put')
+        .then(wins => {
+            return wins;
+        }).catch(err => Promise.reject(err))
+}
