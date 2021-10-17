@@ -1,17 +1,17 @@
 import React from 'react';
 import {UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
-import './ProfileIcon.css';
+import './Profile.css';
 
 const ProfileIcon = ({user, onSignout, toggleProfile}) => {
     const {image, color} = user;
 
     return(
         <>
-            <UncontrolledDropdown>
+            <UncontrolledDropdown inNavbar>
                 <DropdownToggle tag='span'>
-                    <img alt='' className='profile-icon' src={image} style={{borderColor: color}} />
+                    <div className='pic small' style={{backgroundImage: `url(${image})`, borderColor: color}} />
                 </DropdownToggle>
-                <DropdownMenu right modifiers={{offset: {offset: '0px, 7px'}}}>
+                <DropdownMenu style={{right: 0}} /* right modifiers={{offset: {offset: '0px, 7px'}}} */>
                     <DropdownItem onClick={toggleProfile}>Profile</DropdownItem>
                     <DropdownItem divider />
                     <DropdownItem onClick={onSignout}>Sign Out</DropdownItem>

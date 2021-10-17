@@ -52,7 +52,7 @@ class Board extends React.Component {
 
         const cols = 8;
         const rows = 8;
-        const piecesPerTeam = 12;
+        const piecesPerTeam = 1;
         const patternA = '#000000';
         const patternB = '#ff0000';
 
@@ -120,10 +120,9 @@ class Board extends React.Component {
         if(prevState.currentTurn !== this.state.currentTurn) {
             if(this.didGameEnd()) {
                 if(this.state.currentTurn === this.state.player) {
-                    this.props.setWin(false);
                     this.setState({result: LOSE});
                 } else {
-                    this.props.setWin(true);
+                    this.props.onWin();
                     this.setState({result: WIN});
                 }
             }
@@ -303,7 +302,7 @@ class Board extends React.Component {
     }
 
     render() {
-        const {player, clientInfo, oppenentInfo, cols, rows, board, result} = this.state;
+        const {player, currentTurn, clientInfo, oppenentInfo, cols, rows, board, result} = this.state;
         let p1CardProps, p2CardProps;
 
         if(player === 1) {
@@ -319,11 +318,13 @@ class Board extends React.Component {
                 <ResultScreen result={result} />
                 {!this.props.socket && <Redirect to='/' />}
                 <div style={{display: 'flex', padding: '.5rem'}}>
-                    <ProfileCard style={{alignSelf: 'flex-end', marginLeft: 'auto'}} {...p2CardProps} />
+                    {/* Player 2's card (bottom-left side) */}
+                    <ProfileCard style={{alignSelf: 'flex-end', marginLeft: 'auto'}} isPlaying={currentTurn === 2} {...p2CardProps} />
                     <div className='board-container' style={{gridTemplateColumns: `repeat(${cols},1fr)`, gridTemplateRows: `repeat(${rows},1fr)`}}>
                         {board && board.map(r => r.map(c => c))}
                     </div>
-                    <ProfileCard style={{alignSelf: 'flex-start', marginRight: 'auto'}} {...p1CardProps} />
+                    {/* Player 1's card (top-right side) */}
+                    <ProfileCard style={{alignSelf: 'flex-start', marginRight: 'auto'}} statusStyle={{top: 0}} isPlaying={currentTurn === 1} {...p1CardProps} />
                 </div>
             </>
         )

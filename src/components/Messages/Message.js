@@ -3,6 +3,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Modal
 import Profile from '../Profile/Profile';
 import InviteMenu from '../Invite/InviteMenu';
 import './Message.css';
+import '../Profile/Profile.css';
 
 const Message = ({clientId, id, user, text, invite}) => {
     const [showProfile, setShowProfile] = useState(false);
@@ -13,9 +14,9 @@ const Message = ({clientId, id, user, text, invite}) => {
     const dropDownPlacement = (obj, opt) => {
         // console.log('offset', obj, opt)
         if(obj.placement === 'bottom-start') {
-            // console.log('on bottom', obj.attributes)
             // obj.offsets.popper.top = 49;
-            obj.styles.transform = 'translate3d(0px, 49px, 0px)';
+            // obj.styles.transform = 'translate3d(48px, 320px, 0px)';
+            obj.styles.transform = `translate3d(${obj.offsets.popper.left}px, ${obj.offsets.popper.top - 40}px, 0)`;
             return obj;
         }
         return obj;
@@ -26,11 +27,11 @@ const Message = ({clientId, id, user, text, invite}) => {
             <UncontrolledDropdown>
                 <DropdownToggle tag='span'>
                     <div className='user-display'>
-                        <img style={{borderColor: color}} src={image} />
+                        <div className='pic small' style={{backgroundImage: `url(${image})`, borderColor: color}} />
                         <div style={{color: color}}>{username}</div>
                     </div>
                 </DropdownToggle>
-                <DropdownMenu modifiers={{offset: {fn: dropDownPlacement, /* offset: '0px, 47px' */}}}>
+                <DropdownMenu container='body' modifiers={{offset: {fn: dropDownPlacement, /* offset: '0px, 47px' */}}}>
                     <DropdownItem onClick={toggleShowProfile}>Profile</DropdownItem>
                     {clientId !== id &&
                     <>

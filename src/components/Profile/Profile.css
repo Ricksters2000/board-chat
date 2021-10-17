@@ -2,9 +2,15 @@
     width: 7rem;
     height: 7rem;
     background-position: center;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     border: 3px solid;
+}
+
+.pic.small {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid;
 }
 
 .submit-container {

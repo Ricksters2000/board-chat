@@ -10,7 +10,7 @@ import './Nav.css';
 const Navigation = ({userSignedIn, user, onAuthSubmit, onSignout, toggleProfile}) => {
     return(
         <Navbar className='px-3 mb-3' color='light' light expand='md'>
-            <NavbarBrand href="/">reactstrap</NavbarBrand>
+            <NavbarBrand >reactstrap</NavbarBrand>
             <NavbarToggler />
             <Collapse navbar isOpen={true}>
                 <Nav className="ms-auto" navbar>

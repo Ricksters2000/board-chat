@@ -1,8 +1,11 @@
+.game-card {
+    border: 2px solid;
+    border-radius: .25rem;
+}
+
 .player-card {
     display: flex;
     align-items: center;
-    border: 2px solid;
-    border-radius: .25rem;
     border-color: rgb(189, 143, 224);
     background-color: rgb(189, 143, 224, 0.45);
     /* width: 15rem; */
@@ -12,10 +15,17 @@
     margin: .25rem 1rem;
 }
 
-.player-card .profile-icon {
+.game-card .status {
+    height: 1.5rem;
+    width: 3.5rem;
+    position: absolute;
+    bottom: 4.5rem;
+}
+
+.player-card .pic {
     border: none;
     border-radius: .25rem;
-    width: 2.5rem;
+    /* width: 2.5rem; */
     margin-right: 1rem;
 }
 
