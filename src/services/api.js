@@ -1,7 +1,7 @@
 import { DEFAULT_IMAGE } from "./constants";
 import axios from 'axios';
 
-const apiUrl = 'http://localhost:8000';
+const apiUrl = process.env.REACT_APP_REST_API;
 
 axios.defaults.baseURL = apiUrl;
 
