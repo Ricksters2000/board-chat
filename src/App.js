@@ -28,7 +28,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({socket: io('http://localhost:8000')});
+    this.setState({socket: io(process.env.REACT_APP_REST_API)});
   }
 
   componentDidUpdate(prevProps, prevState) {
