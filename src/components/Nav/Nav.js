@@ -10,7 +10,7 @@ import './Nav.css';
 const Navigation = ({userSignedIn, user, onAuthSubmit, onSignout, toggleProfile}) => {
     return(
         <Navbar className='px-3 mb-3' color='light' light expand='md'>
-            <NavbarBrand >reactstrap</NavbarBrand>
+            <NavbarBrand ><img style={{width: '32px'}} src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/000000/external-board-game-sports-activities-flatart-icons-outline-flatarticons.png"/></NavbarBrand>
             <NavbarToggler />
             <Collapse navbar isOpen={true}>
                 <Nav className="ms-auto" navbar>
