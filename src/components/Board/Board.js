@@ -52,7 +52,7 @@ class Board extends React.Component {
 
         const cols = 8;
         const rows = 8;
-        const piecesPerTeam = 1;
+        const piecesPerTeam = 12;
         const patternA = '#000000';
         const patternB = '#ff0000';
 
